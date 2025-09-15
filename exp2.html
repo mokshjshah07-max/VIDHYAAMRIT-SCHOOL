@@ -1,0 +1,3116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vidyaamrit University - Portal Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #002855;
+            --secondary-color: #004080;
+            --highlight-color: #ffd633;
+            --background-dark: #1a1f3a;
+            --background-light: #f0f2f5;
+            --text-dark: #001f3e;
+            --text-light: #fff;
+            --present-color: #27ae60;
+            --absent-color: #c0392b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, sans-serif;
+            background: var(--background-light);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-dark);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            padding: 20px 50px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        .navbar .links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .links a:hover {
+            color: var(--highlight-color);
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .login-box {
+            display: flex;
+            width: 850px;
+            background-color: var(--text-light);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .login-left {
+            flex: 1;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .login-left img {
+            max-width: 75%;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 50px 50px 50px 60px;
+            background-color: var(--background-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-right h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            font-size: 28px;
+        }
+
+        .login-right input,
+        .login-right button,
+        .login-right select,
+        .portal-button {
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            border-radius: 14px;
+            font-size: 17px;
+            outline-offset: 2px;
+            transition: box-shadow 0.3s ease, transform 0.2s, background-color 0.2s;
+        }
+
+        .login-right input {
+            border: 1.5px solid #ccc;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .login-right input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px #002855aa;
+        }
+
+        .login-right select {
+            border: 1.5px solid #ccc;
+        }
+
+        .login-right button {
+            border: none;
+            background: var(--primary-color);
+            color: var(--text-light);
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1.2px;
+            box-shadow: 0 5px 15px rgba(0, 40, 120, 0.7);
+        }
+
+        .login-right button:hover {
+            background: var(--secondary-color);
+            box-shadow: 0 6px 18px rgba(0, 60, 180, 0.85);
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .portal-button {
+            flex: 1 1 30%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            background-color: #004080;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0, 64, 128, 0.4);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .portal-button:hover {
+            background-color: #002855;
+            transform: scale(1.05);
+        }
+
+        .dashboard {
+            display: none;
+            flex: 1;
+            padding: 25px 40px;
+            padding-top: 100px;
+            background: var(--background-light);
+            overflow-y: auto;
+            font-size: 16px;
+        }
+
+        .dashboard-container {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--primary-color);
+            border-radius: 18px;
+            padding: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+            height: fit-content;
+        }
+
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 18px 25px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .sidebar button:hover,
+        .sidebar button.active {
+            background: var(--secondary-color);
+            padding-left: 30px;
+        }
+
+        .sidebar button.active {
+            box-shadow: inset 5px 0 0 var(--highlight-color);
+        }
+
+        .sidebar button span {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .content-area {
+            flex: 1;
+        }
+
+        .student-selector-container {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .student-selector-container label {
+            margin-right: 10px;
+            font-weight: 600;
+        }
+
+        select#studentSelector {
+            font-size: 16px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: var(--text-light);
+            color: var(--primary-color);
+        }
+
+        select#studentSelector option {
+            background-color: var(--text-light);
+            color: var(--primary-color);
+        }
+
+        select#studentSelector:hover,
+        select#studentSelector:focus {
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 8px rgba(0, 40, 85, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--text-light);
+            border-radius: 18px;
+            padding: 35px 45px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .profile-box {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .profile-box img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 5px solid var(--primary-color);
+            object-fit: cover;
+            box-shadow: 0 6px 20px rgba(0, 40, 85, 0.6);
+        }
+
+        .profile-details {
+            flex: 1;
+        }
+
+        .profile-details p {
+            margin: 12px 0;
+            font-size: 17px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .profile-details b {
+            color: var(--primary-color);
+            width: 140px;
+            display: inline-block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        .stat-card p {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .attendance-calendar {
+            max-width: 460px;
+            margin: 0 auto 25px auto;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            user-select: none;
+        }
+
+        .attendance-calendar h3 {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .attendance-day,
+        .attendance-header {
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 10px;
+            font-size: 15px;
+            user-select: none;
+        }
+
+        .attendance-header {
+            background: var(--primary-color);
+            color: var(--text-light);
+            box-shadow: 0 3px 8px rgba(0, 40, 85, 0.7);
+        }
+
+        .attendance-day.present {
+            background-color: var(--present-color);
+            color: var(--text-light);
+            box-shadow: 0 3px 10px rgba(39, 174, 96, 0.8);
+        }
+
+        .attendance-day.absent {
+            background-color: var(--absent-color);
+            color: var(--text-light);
+            box-shadow: 0 3px 10px rgba(192, 57, 43, 0.85);
+        }
+
+        .weekly-tests p {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .weekly-tests ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .weekly-tests li {
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .marksheet table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: var(--text-dark);
+        }
+
+        .marksheet th,
+        .marksheet td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .marksheet th {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .status-pass {
+            color: var(--present-color);
+            font-weight: 700;
+        }
+
+        .status-fail {
+            color: var(--absent-color);
+            font-weight: 700;
+        }
+
+        .activity-card,
+        .lab-card {
+            background-color: #ffffff;
+            border-left: 6px solid var(--secondary-color);
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 40, 85, 0.2);
+            color: var(--text-dark);
+        }
+
+        .activity-card h4,
+        .lab-card h4 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .activity-card small {
+            color: var(--text-dark);
+            display: block;
+            margin-top: 5px;
+        }
+
+        .lab-card span {
+            display: inline-block;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="Primary">
+        <div class="title" tabindex="0">VIDYAAMRIT SCHOOL</div>
+        <div class="links" role="menu">
+            <a href="#" role="menuitem" tabindex="0">Home</a>
+            <a href="#" role="menuitem" tabindex="0">Contact</a>
+            <a href="#" role="menuitem" tabindex="0">Help</a>
+        </div>
+    </nav>
+
+    <div class="login-container" id="loginScreen">
+        <div class="login-box" role="main" aria-label="Portal Login Form">
+            <div class="login-left" aria-hidden="true">
+                <img src="inages.jpg" alt="University Illustration" />
+            </div>
+            <div class="login-right">
+                <h2>Portal Login</h2>
+                <div style="display: flex; gap: 20px; justify-content: space-around; flex-wrap: wrap;">
+                    <button class="portal-button" data-role="student">🎓 Student Portal</button>
+                    <button class="portal-button" data-role="teacher">📘 Teacher Portal</button>
+                    <button class="portal-button" data-role="parent">👨‍👩‍👧 Parent Portal</button>
+                </div>
+                <div id="loginInputs" style="display:none; margin-top: 30px;">
+                    <h2 id="portalTitle">Login</h2>
+                    <input id="username" type="text" placeholder="Enter your username" aria-label="Username" required />
+                    <input id="password" type="password" placeholder="Enter your password" aria-label="Password" required />
+                    <button id="loginBtn" aria-label="Login">Login</button>
+                    <div class="forgot-password" tabindex="0" role="button" aria-label="Forgot Password">Forgot Password?</div>
+                    <div id="message" role="alert" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="dashboard" id="dashboard" role="main" aria-label="Dashboard">
+        <div class="student-selector-container" id="selectorContainer" style="display: none;">
+            <label for="studentSelector">Select Student:</label>
+            <select id="studentSelector"></select>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <button class="tab-button active" role="tab" aria-selected="true" aria-controls="profileTab" id="tab-profile" tabindex="-1"><span>👤</span>Profile</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="overviewTab" id="tab-overview" tabindex="0"><span>🏠</span>Overview</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="attendanceTab" id="tab-attendance" tabindex="-1"><span>📅</span>Attendance</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="weeklyTestsTab" id="tab-weeklyTests" tabindex="-1"><span>📝</span>Weekly Tests</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="marksheetTab" id="tab-marksheet" tabindex="-1"><span>💯</span>Marksheet</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="labsTab" id="tab-labs" tabindex="-1"><span>🧪</span>Labs</button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="activitiesTab" id="tab-activities" tabindex="-1"><span>🎯</span>Activities</button>
+            </div>
+
+            <div class="content-area">
+                <section id="profileTab" class="tab-content active" role="tabpanel" aria-labelledby="tab-profile">
+                    <div class="profile-box">
+                        <img src="" alt="Profile Picture" id="studentPhoto" />
+                        <div class="profile-details" id="profileDetails"></div>
+                    </div>
+                </section>
+
+                <section id="overviewTab" class="tab-content" role="tabpanel" aria-labelledby="tab-overview">
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <h3>Total Days Present</h3>
+                            <p id="presentDays"></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Days Absent</h3>
+                            <p id="absentDays"></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Average Test Score</h3>
+                            <p id="averageScore"></p>
+                        </div>
+                    </div>
+                    <div style="background-color: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px;">
+                        <h3 style="color: var(--primary-color); text-align: center;">Attendance Distribution</h3>
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </section>
+
+                <section id="attendanceTab" class="tab-content" role="tabpanel" aria-labelledby="tab-attendance">
+                    <div class="attendance-calendar" id="attendanceCalendar"></div>
+                </section>
+
+                <section id="weeklyTestsTab" class="tab-content" role="tabpanel" aria-labelledby="tab-weeklyTests">
+                    <div style="width: 100%; max-width: 800px; margin: 0 auto;">
+                        <canvas id="weeklyTestsChart"></canvas>
+                    </div>
+                </section>
+
+                <section id="marksheetTab" class="tab-content" role="tabpanel" aria-labelledby="tab-marksheet">
+                    <div class="marksheet" id="marksheetContainer"></div>
+                </section>
+
+                <section id="labsTab" class="tab-content" role="tabpanel" aria-labelledby="tab-labs">
+                    <div class="labs" id="labsContainer"></div>
+                </section>
+
+                <section id="activitiesTab" class="tab-content" role="tabpanel" aria-labelledby="tab-activities">
+                    <div class="activities" id="activitiesContainer"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Vidyaamrit University © 2025 
+    </footer>
+
+    <script>
+        // Data for 40 students, teacher & parent
+        const users = {
+            // 9TH GRADE  Students
+            student1: {
+                password: 'pass1',
+                role: 'student',
+                data: {
+                    username: 'student1',
+                    name: 'John Doe',
+                    id: 'VID2023012345',
+                    email: 'john.doe@vidyaamrit.edu.in',
+                    phone: '+91 98765 43210',
+                    course: '9 TH GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-11': 'P',
+                        '2025-09-15': 'P',
+                        '2025-09-18': 'P',
+                        '2025-09-20': 'P',
+                        '2025-09-22': 'P',
+                        '2025-09-25': 'P'
+                    }),
+                    weeklyTests: [78, 85, 82, 90, 88, 91],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 38,
+                            external: 55
+                        },
+                        'SST': {
+                            internal: 36,
+                            external: 52
+                        },
+                        'ENGLISH': {
+                            internal: 39,
+                            external: 58
+                        },
+                        'Mathematics': {
+                            internal: 35,
+                            external: 50
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-08-15',
+                        status: 'Completed',
+                        grade: 'A'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-08-22',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Debate Club',
+                        since: '2023'
+                    }, {
+                        title: 'Basketball Team',
+                        role: 'Captain (2024)'
+                    }]
+                }
+            },
+            student2: {
+                password: 'pass2',
+                role: 'student',
+                data: {
+                    username: 'student2',
+                    name: 'Ananya Singh',
+                    id: 'VID2023012346',
+                    email: 'ananya.singh@vidyaamrit.edu.in',
+                    phone: '+91 87654 32109',
+                    course: '9TH GRADE  ',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/44.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'A',
+                        '2025-09-12': 'P',
+                        '2025-09-14': 'P',
+                        '2025-09-17': 'P'
+                    }),
+                    weeklyTests: [82, 79, 88, 91, 85],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 37,
+                            external: 53
+                        },
+                        'SST': {
+                            internal: 35,
+                            external: 50
+                        },
+                        'ENGLISH': {
+                            internal: 38,
+                            external: 54
+                        },
+                        'Mathematics': {
+                            internal: 36,
+                            external: 51
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-08-16',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }],
+                    activities: [{
+                        title: 'Music Club',
+                        since: '2022'
+                    }, {
+                        title: 'Volleyball Team',
+                        role: 'Member'
+                    }]
+                }
+            },
+            student3: {
+                password: 'pass3',
+                role: 'student',
+                data: {
+                    username: 'student3',
+                    name: 'Rohan Mehta',
+                    id: 'VID2023012347',
+                    email: 'rohan.mehta@vidyaamrit.edu.in',
+                    phone: '+91 99876 54321',
+                    course: '9TH GRADE  ',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/65.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-09': 'P',
+                        '2025-09-12': 'P'
+                    }),
+                    weeklyTests: [75, 80, 79, 85, 81, 78],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 34,
+                            external: 48
+                        },
+                        'SST': {
+                            internal: 33,
+                            external: 47
+                        },
+                        'ENGLISH': {
+                            internal: 36,
+                            external: 49
+                        },
+                        'Mathematics': {
+                            internal: 32,
+                            external: 45
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-08-20',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'SCIENCE',
+                        since: '2023'
+                    }, {
+                        title: 'Debate Team',
+                        role: 'Member'
+                    }]
+                }
+            },
+            student4: {
+                password: 'pass4',
+                role: 'student',
+                data: {
+                    username: 'student4',
+                    name: 'Priya Sharma',
+                    id: 'VID2023012348',
+                    email: 'priya.sharma@vidyaamrit.edu.in',
+                    phone: '+91 98765 43211',
+                    course: '9 TH GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/36.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-15': 'P',
+                        '2025-09-18': 'P'
+                    }),
+                    weeklyTests: [85, 87, 90, 92, 95, 93],
+                    marks: {
+                        'ENGLISHs': {
+                            internal: 38,
+                            external: 55
+                        },
+                        'SCIENCE': {
+                            internal: 37,
+                            external: 54
+                        },
+                        'SST': {
+                            internal: 36,
+                            external: 53
+                        },
+                        'Mathematics': {
+                            internal: 39,
+                            external: 58
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH LAB',
+                        date: '2025-08-18',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Chess Club',
+                        since: '2024'
+                    }, {
+                        title: 'Mentorship Program',
+                        role: 'Tutor'
+                    }]
+                }
+            },
+            student5: {
+                password: 'pass5',
+                role: 'student',
+                data: {
+                    username: 'student5',
+                    name: 'Arjun Patel',
+                    id: 'VID2023012349',
+                    email: 'arjun.patel@vidyaamrit.edu.in',
+                    phone: '+91 98765 43212',
+                    course: '9TH GRADE  ECE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/48.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'A',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-09': 'P',
+                        '2025-09-11': 'P'
+                    }),
+                    weeklyTests: [77, 81, 79, 83, 80],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 35,
+                            external: 50
+                        },
+                        'SST': {
+                            internal: 34,
+                            external: 48
+                        },
+                        'ENGLISH': {
+                            internal: 37,
+                            external: 52
+                        },
+                        'Mathematics': {
+                            internal: 33,
+                            external: 45
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-08-22',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Football Team',
+                        role: 'Captain (2023)'
+                    }]
+                }
+            },
+            student6: {
+                password: 'pass6',
+                role: 'student',
+                data: {
+                    username: 'student6',
+                    name: 'Sneha Gupta',
+                    id: 'VID2023012350',
+                    email: 'sneha.gupta@vidyaamrit.edu.in',
+                    phone: '+91 99876 54322',
+                    course: '9 TH GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/22.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-03': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-14': 'P'
+                    }),
+                    weeklyTests: [80, 82, 85, 88, 86, 89],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 36,
+                            external: 51
+                        },
+                        'ENGLISH': {
+                            internal: 35,
+                            external: 50
+                        },
+                        'SST': {
+                            internal: 34,
+                            external: 49
+                        },
+                        'Mathematics': {
+                            internal: 37,
+                            external: 53
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-08-17',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Drama Club',
+                        since: '2023'
+                    }, {
+                        title: 'Theatre Society',
+                        role: 'Director'
+                    }]
+                }
+            },
+            student7: {
+                password: 'pass7',
+                role: 'student',
+                data: {
+                    username: 'student7',
+                    name: 'Kabir Khan',
+                    id: 'VID2023012351',
+                    email: 'kabir.khan@vidyaamrit.edu.in',
+                    phone: '+91 98765 43213',
+                    course: '9TH GRADE  ME',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/11.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-05': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-08': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-13': 'P'
+                    }),
+                    weeklyTests: [70, 74, 72, 75, 77],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 33,
+                            external: 45
+                        },
+                        'SST': {
+                            internal: 32,
+                            external: 44
+                        },
+                        'ENGLISH': {
+                            internal: 35,
+                            external: 47
+                        },
+                        'Mathematics': {
+                            internal: 34,
+                            external: 46
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-08-21',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'Automobile Club',
+                        since: '2024'
+                    }, {
+                        title: 'Formula Student Team',
+                        role: 'Team Member'
+                    }]
+                }
+            },
+            student8: {
+                password: 'pass8',
+                role: 'student',
+                data: {
+                    username: 'student8',
+                    name: 'Riya Nair',
+                    id: 'VID2023012352',
+                    email: 'riya.nair@vidyaamrit.edu.in',
+                    phone: '+91 99876 54323',
+                    course: '9TH GRADE  ',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/55.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-10': 'P',
+                        '2025-09-12': 'P',
+                        '2025-09-15': 'P',
+                        '2025-09-18': 'P'
+                    }),
+                    weeklyTests: [88, 90, 92, 95, 94],
+                    marks: {
+                        'SST': {
+                            internal: 39,
+                            external: 56
+                        },
+                        'SCIENCE': {
+                            internal: 32,
+                            external: 55
+                        },
+                        'ENGLISH': {
+                            internal: 31,
+                            external: 58
+                        },
+                        'Mathematics': {
+                            internal: 30,
+                            external: 54
+                        }
+                    },
+                    labs: [{
+                        name: 'Basic Electronics Lab',
+                        date: '2025-08-19',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Yoga Club',
+                        since: '2024'
+                    }, {
+                        title: 'Fitness Group',
+                        role: 'Lead'
+                    }]
+                }
+            },
+            student9: {
+                password: 'pass9',
+                role: 'student',
+                data: {
+                    username: 'student9',
+                    name: 'Neha Desai',
+                    id: 'VID2023012353',
+                    email: 'neha.desai@vidyaamrit.edu.in',
+                    phone: '+91 98765 43214',
+                    course: '9 TH GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/20.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-11': 'P',
+                        '2025-09-13': 'P',
+                        '2025-09-16': 'P',
+                        '2025-09-19': 'P'
+                    }),
+                    weeklyTests: [84, 86, 89, 90, 87, 91],
+                    marks: {
+                        'SST': {
+                            internal: 34,
+                            external: 54
+                        },
+                        'SCIENCE': {
+                            internal: 32,
+                            external: 53
+                        },
+                        'ENGLISH': {
+                            internal: 33,
+                            external: 55
+                        },
+                        'Mathematics': {
+                            internal: 32,
+                            external: 52
+                        }
+                    },
+                    labs: [{
+                        name: 'SST Lab',
+                        date: '2025-08-28',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'MATH Club',
+                        since: '2022'
+                    }, {
+                        title: 'Research Group',
+                        role: 'Team Lead'
+                    }]
+                }
+            },
+            student10: {
+                password: 'pass10',
+                role: 'student',
+                data: {
+                    username: 'student10',
+                    name: 'Vikram Singh',
+                    id: 'VID2023012354',
+                    email: 'vikram.singh@vidyaamrit.edu.in',
+                    phone: '+91 98765 43215',
+                    course: '10 GRADE ',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/45.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-14': 'P',
+                        '2025-09-16': 'P',
+                        '2025-09-18': 'P',
+                        '2025-09-20': 'P'
+                    }),
+                    weeklyTests: [79, 82, 80, 88, 85],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 35,
+                            external: 50
+                        },
+                        'SST': {
+                            internal: 34,
+                            external: 49
+                        },
+                        'ENGLISH': {
+                            internal: 36,
+                            external: 52
+                        },
+                        'Mathematics': {
+                            internal: 33,
+                            external: 47
+                        }
+                    },
+                    labs: [{
+                        name: 'SolidWorks Lab',
+                        date: '2025-08-25',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Auto Club',
+                        since: '2023'
+                    }, {
+                        title: 'Go-karting Team',
+                        role: 'Driver'
+                    }]
+                }
+            },
+            student11: {
+                password: 'pass11',
+                role: 'student',
+                data: {
+                    username: 'student11',
+                    name: 'Meera Joshi',
+                    id: 'VID2023012355',
+                    email: 'meera.joshi@vidyaamrit.edu.in',
+                    phone: '+91 99876 54325',
+                    course: '10 GRADE ',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/31.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-17': 'P',
+                        '2025-09-19': 'P',
+                        '2025-09-21': 'P',
+                        '2025-09-23': 'P'
+                    }),
+                    weeklyTests: [85, 87, 89, 92, 90],
+                    marks: {
+                        'SST': {
+                            internal: 37,
+                            external: 53
+                        },
+                        'SCIENCE': {
+                            internal: 36,
+                            external: 52
+                        },
+                        'ENGLISH': {
+                            internal: 38,
+                            external: 54
+                        },
+                        'Mathematics': {
+                            internal: 35,
+                            external: 50
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-08-30',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Dance Club',
+                        since: '2024'
+                    }, {
+                        title: 'Cultural Committee',
+                        role: 'Event Coordinator'
+                    }]
+                }
+            },
+            student12: {
+                password: 'pass12',
+                role: 'student',
+                data: {
+                    username: 'student12',
+                    name: 'Amit Raval',
+                    id: 'VID2023012356',
+                    email: 'amit.raval@vidyaamrit.edu.in',
+                    phone: '+91 98765 43216',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/18.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-20': 'P',
+                        '2025-09-22': 'P',
+                        '2025-09-24': 'P',
+                        '2025-09-26': 'P'
+                    }),
+                    weeklyTests: [78, 81, 84, 88, 85],
+                    marks: {
+                        'SST': {
+                            internal: 36,
+                            external: 52
+                        },
+                        'SCIENCE': {
+                            internal: 35,
+                            external: 50
+                        },
+                        'ENGLISH': {
+                            internal: 37,
+                            external: 53
+                        },
+                        'Mathematics': {
+                            internal: 34,
+                            external: 49
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-01',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Science Club',
+                        since: '2022'
+                    }, {
+                        title: 'Robotics Team',
+                        role: 'Member'
+                    }]
+                }
+            },
+            student13: {
+                password: 'pass13',
+                role: 'student',
+                data: {
+                    username: 'student13',
+                    name: 'Sunita Rao',
+                    id: 'VID2023012357',
+                    email: 'sunita.rao@vidyaamrit.edu.in',
+                    phone: '+91 99876 54327',
+                    course: '10 GRADE ',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/19.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-23': 'P',
+                        '2025-09-25': 'P',
+                        '2025-09-27': 'P',
+                        '2025-09-29': 'P'
+                    }),
+                    weeklyTests: [90, 92, 95, 97, 96],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 39,
+                            external: 58
+                        },
+                        'SST': {
+                            internal: 38,
+                            external: 57
+                        },
+                        'ENGLISH': {
+                            internal: 40,
+                            external: 59
+                        },
+                        'Mathematics': {
+                            internal: 38,
+                            external: 56
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-03',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Art Club',
+                        since: '2023'
+                    }, {
+                        title: 'Photography Society',
+                        role: 'Member'
+                    }]
+                }
+            },
+            student14: {
+                password: 'pass14',
+                role: 'student',
+                data: {
+                    username: 'student14',
+                    name: 'Devansh Patel',
+                    id: 'VID2023012358',
+                    email: 'devansh.patel@vidyaamrit.edu.in',
+                    phone: '+91 98765 43218',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/28.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-26': 'P',
+                        '2025-09-28': 'P',
+                        '2025-09-30': 'P'
+                    }),
+                    weeklyTests: [74, 78, 80, 85, 82],
+                    marks: {
+                        'SST': {
+                            internal: 34,
+                            external: 48
+                        },
+                        'SCIENCE': {
+                            internal: 33,
+                            external: 47
+                        },
+                        'ENGLISH': {
+                            internal: 35,
+                            external: 49
+                        },
+                        'Mathematics': {
+                            internal: 32,
+                            external: 45
+                        }
+                    },
+                    labs: [{
+                        name: 'Material Testing Lab',
+                        date: '2025-09-05',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'Moto Club',
+                        since: '2024'
+                    }, {
+                        title: 'Racing Team',
+                        role: 'Mechanic'
+                    }]
+                }
+            },
+            student15: {
+                password: 'pass15',
+                role: 'student',
+                data: {
+                    username: 'student15',
+                    name: 'Pooja Naik',
+                    id: 'VID2023012359',
+                    email: 'pooja.naik@vidyaamrit.edu.in',
+                    phone: '+91 99876 54329',
+                    course: '10 GRADE',
+        
+                    image: 'https://randomuser.me/api/portraits/women/29.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-29': 'P',
+                        '2025-09-30': 'P',
+                        '2025-09-27': 'P'
+                    }),
+                    weeklyTests: [88, 90, 92, 94, 91],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 38,
+                            external: 57
+                        },
+                        'SST': {
+                            internal: 37,
+                            external: 56
+                        },
+                        'SCIENCE': {
+                            internal: 39,
+                            external: 58
+                        },
+                        'Mathematics': {
+                            internal: 37,
+                            external: 55
+                        }
+                    },
+                    labs: [{
+                        name: 'Web Dev Lab',
+                        date: '2025-09-07',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Coding Workshop',
+                        since: '2023'
+                    }, {
+                        title: 'Student Mentor',
+                        role: 'Volunteer'
+                    }]
+                }
+            },
+            // BCA Students
+            student16: {
+                password: 'pass16',
+                role: 'student',
+                data: {
+                    username: 'student16',
+                    name: 'Rahul Kumar',
+                    id: 'VID2023012360',
+                    email: 'rahul.kumar@vidyaamrit.edu.in',
+                    phone: '+91 91234 56780',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/50.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'A',
+                        '2025-09-08': 'P'
+                    }),
+                    weeklyTests: [85, 88, 91, 87, 89],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 45,
+                            external: 80
+                        },
+                        'SST': {
+                            internal: 42,
+                            external: 75
+                        },
+                        'MATH': {
+                            internal: 48,
+                            external: 85
+                        },
+                        'ENGLISH': {
+                            internal: 40,
+                            external: 70
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-05',
+                        status: 'Completed',
+                        grade: 'A'
+                    }, {
+                        name: 'SST Lab',
+                        date: '2025-09-12',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Tech Club',
+                        since: '2025'
+                    }, {
+                        title: 'Quiz Competition',
+                        role: 'Winner (2025)'
+                    }]
+                }
+            },
+            student17: {
+                password: 'pass17',
+                role: 'student',
+                data: {
+                    username: 'student17',
+                    name: 'Shalini Gupta',
+                    id: 'VID2023012361',
+                    email: 'shalini.gupta@vidyaamrit.edu.in',
+                    phone: '+91 91234 56781',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/51.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'A',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P'
+                    }),
+                    weeklyTests: [78, 81, 75, 80, 82],
+                    marks: {
+                        'SST': {
+                            internal: 40,
+                            external: 72
+                        },
+                        'SCIENCE': {
+                            internal: 38,
+                            external: 70
+                        },
+                        'ENGLISH': {
+                            internal: 43,
+                            external: 78
+                        },
+                        'MATH': {
+                            internal: 39,
+                            external: 75
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-08',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }, {
+                        name: 'SST Lab',
+                        date: '2025-09-15',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }],
+                    activities: [{
+                        title: 'Coding Club',
+                        since: '2024'
+                    }, {
+                        title: 'Volunteer',
+                        role: 'NGO Support'
+                    }]
+                }
+            },
+            student18: {
+                password: 'pass18',
+                role: 'student',
+                data: {
+                    username: 'student18',
+                    name: 'Vivek Sharma',
+                    id: 'VID2023012362',
+                    email: 'vivek.sharma@vidyaamrit.edu.in',
+                    phone: '+91 91234 56782',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/52.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'A',
+                        '2025-09-08': 'P',
+                        '2025-09-11': 'P'
+                    }),
+                    weeklyTests: [90, 92, 88, 95, 91],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 48,
+                            external: 88
+                        },
+                        'SST': {
+                            internal: 45,
+                            external: 85
+                        },
+                        'SCIENCE': {
+                            internal: 46,
+                            external: 82
+                        },
+                        'MATH': {
+                            internal: 47,
+                            external: 86
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-09',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }, {
+                        name: 'Networking Lab',
+                        date: '2025-09-16',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Cybersecurity Forum',
+                        since: '2023'
+                    }, {
+                        title: 'Student Council',
+                        role: 'General Secretary'
+                    }]
+                }
+            },
+            student19: {
+                password: 'pass19',
+                role: 'student',
+                data: {
+                    username: 'student19',
+                    name: 'Kavita Jain',
+                    id: 'VID2023012363',
+                    email: 'kavita.jain@vidyaamrit.edu.in',
+                    phone: '+91 91234 56783',
+                    course: '10 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/53.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-09': 'P'
+                    }),
+                    weeklyTests: [82, 85, 80, 89, 87],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 44,
+                            external: 78
+                        },
+                        'SST': {
+                            internal: 34,
+                            external: 74
+                        },
+                        'ENGLISH': {
+                            internal: 33,
+                            external: 82
+                        },
+                        'MATH ': {
+                            internal: 32,
+                            external: 76
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH LAB',
+                        date: '2025-09-06',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }, {
+                        name: 'Web Development Lab',
+                        date: '2025-09-13',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Dance Club',
+                        since: '2025'
+                    }]
+                }
+            },
+            student20: {
+                password: 'pass20',
+                role: 'student',
+                data: {
+                    username: 'student20',
+                    name: 'Siddharth Rao',
+                    id: 'VID2023012364',
+                    email: 'siddharth.rao@vidyaamrit.edu.in',
+                    phone: '+91 91234 56784',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/54.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'A',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-09': 'P',
+                        '2025-09-11': 'P'
+                    }),
+                    weeklyTests: [75, 78, 81, 79, 83],
+                    marks: {
+                        'SST': {
+                            internal: 39,
+                            external: 70
+                        },
+                        'SCIENCE': {
+                            internal: 37,
+                            external: 68
+                        },
+                        'ENGLISH': {
+                            internal: 41,
+                            external: 75
+                        },
+                        'MATH': {
+                            internal: 36,
+                            external: 70
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-09',
+                        status: 'Completed',
+                        grade: 'B'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-09-16',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Photography Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student21: {
+                password: 'pass21',
+                role: 'student',
+                data: {
+                    username: 'student21',
+                    name: 'Pooja Sharma',
+                    id: 'VID2023012365',
+                    email: 'pooja.sharma@vidyaamrit.edu.in',
+                    phone: '+91 91234 56785',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/55.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-08': 'A',
+                        '2025-09-10': 'P'
+                    }),
+                    weeklyTests: [88, 90, 85, 93, 89],
+                    marks: {
+                        'SST': {
+                            internal: 45,
+                            external: 80
+                        },
+                        'ENGLISH': {
+                            internal: 42,
+                            external: 77
+                        },
+                        'SCIENCE': {
+                            internal: 44,
+                            external: 79
+                        },
+                        'MATH': {
+                            internal: 46,
+                            external: 81
+                        }
+                    },
+                    labs: [{
+                        name: 'Java Lab',
+                        date: '2025-09-10',
+                        status: 'Completed',
+                        grade: 'A'
+                    }, {
+                        name: 'MATH LAB',
+                        date: '2025-09-17',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }],
+                    activities: [{
+                        title: 'Drama Club',
+                        since: '2023'
+                    }, {
+                        title: 'Mentorship Program',
+                        role: 'Mentor'
+                    }]
+                }
+            },
+            student22: {
+                password: 'pass22',
+                role: 'student',
+                data: {
+                    username: 'student22',
+                    name: 'Rohit Verma',
+                    id: 'VID2023012366',
+                    email: 'rohit.verma@vidyaamrit.edu.in',
+                    phone: '+91 91234 56786',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/56.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'A',
+                        '2025-09-06': 'P',
+                        '2025-09-08': 'P',
+                        '2025-09-10': 'P'
+                    }),
+                    weeklyTests: [75, 79, 82, 77, 80],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 33,
+                            external: 70
+                        },
+                        'MATH': {
+                            internal: 31,
+                            external: 68
+                        },
+                        'ENGLISH': {
+                            internal: 32,
+                            external: 75
+                        },
+                        'SST': {
+                            internal: 37,
+                            external: 65
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH LAB',
+                        date: '2025-09-07',
+                        status: 'Completed',
+                        grade: 'B'
+                    }, {
+                        name: '',
+                        date: '2025-09-14',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Sports Club',
+                        since: '2025'
+                    }, {
+                        title: 'Football Team',
+                        role: 'Member'
+                    }]
+                }
+            },
+            student23: {
+                password: 'pass23',
+                role: 'student',
+                data: {
+                    username: 'student23',
+                    name: 'Swati Reddy',
+                    id: 'VID2023012367',
+                    email: 'swati.reddy@vidyaamrit.edu.in',
+                    phone: '+91 91234 56787',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/57.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'A',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-08': 'P',
+                        '2025-09-12': 'P'
+                    }),
+                    weeklyTests: [85, 88, 90, 89, 91],
+                    marks: {
+                        'SST': {
+                            internal: 44,
+                            external: 80
+                        },
+                        'SCIENCE': {
+                            internal: 41,
+                            external: 75
+                        },
+                        'ENGLISH': {
+                            internal: 46,
+                            external: 82
+                        },
+                        'MATH': {
+                            internal: 42,
+                            external: 78
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-11',
+                        status: 'Completed',
+                        grade: 'A'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-09-18',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }],
+                    activities: [{
+                        title: 'Literary Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student24: {
+                password: 'pass24',
+                role: 'student',
+                data: {
+                    username: 'student24',
+                    name: 'Arnav Singh',
+                    id: 'VID2023012368',
+                    email: 'arnav.singh@vidyaamrit.edu.in',
+                    phone: '+91 91234 56788',
+                    course: '11 GRADE',
+        
+                    image: 'https://randomuser.me/api/portraits/men/58.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-10': 'A',
+                        '2025-09-13': 'P',
+                        '2025-09-16': 'P'
+                    }),
+                    weeklyTests: [70, 75, 72, 78, 76],
+                    marks: {
+                        'SST': {
+                            internal: 35,
+                            external: 65
+                        },
+                        'ENGLISH': {
+                            internal: 38,
+                            external: 70
+                        },
+                        'SCIENCE': {
+                            internal: 36,
+                            external: 68
+                        },
+                        'MATH': {
+                            internal: 39,
+                            external: 72
+                        }
+                    },
+                    labs: [{
+                        name: ',MATH Lab',
+                        date: '2025-09-12',
+                        status: 'Completed',
+                        grade: 'B-'
+                    }, {
+                        name: 'Networking Lab',
+                        date: '2025-09-19',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'Entrepreneurship Cell',
+                        since: '2023'
+                    }]
+                }
+            },
+            student25: {
+                password: 'pass25',
+                role: 'student',
+                data: {
+                    username: 'student25',
+                    name: 'Diya Singh',
+                    id: 'VID2023012369',
+                    email: 'diya.singh@vidyaamrit.edu.in',
+                    phone: '+91 91234 56789',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/59.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-03': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-09': 'P',
+                        '2025-09-12': 'P',
+                        '2025-09-15': 'A'
+                    }),
+                    weeklyTests: [88, 90, 93, 91, 95],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 46,
+                            external: 85
+                        },
+                        'MATH': {
+                            internal: 44,
+                            external: 80
+                        },
+                        'SST': {
+                            internal: 49,
+                            external: 88
+                        },
+                        'ENGLISH': {
+                            internal: 45,
+                            external: 82
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH',
+                        date: '2025-09-08',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }, {
+                        name: 'MATH',
+                        date: '2025-09-15',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Quiz Club',
+                        since: '2025'
+                    }, {
+                        title: 'Tech Fest Organizer',
+                        role: 'Head'
+                    }]
+                }
+            },
+            student26: {
+                password: 'pass26',
+                role: 'student',
+                data: {
+                    username: 'student26',
+                    name: 'Gaurav Kumar',
+                    id: 'VID2023012370',
+                    email: 'gaurav.kumar@vidyaamrit.edu.in',
+                    phone: '+91 91234 56790',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/60.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-04': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'A',
+                        '2025-09-14': 'P',
+                        '2025-09-17': 'P'
+                    }),
+                    weeklyTests: [76, 79, 81, 78, 83],
+                    marks: {
+                        'SST': {
+                            internal: 38,
+                            external: 70
+                        },
+                        'SCIENCE': {
+                            internal: 36,
+                            external: 68
+                        },
+                        'ENGLISH': {
+                            internal: 40,
+                            external: 75
+                        },
+                        'MATH': {
+                            internal: 35,
+                            external: 65
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-13',
+                        status: 'Completed',
+                        grade: 'B'
+                    }, {
+                        name: 'SQL Lab',
+                        date: '2025-09-20',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Sports Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student27: {
+                password: 'pass27',
+                role: 'student',
+                data: {
+                    username: 'student27',
+                    name: 'Kiran Singh',
+                    id: 'VID2023012371',
+                    email: 'kiran.singh@vidyaamrit.edu.in',
+                    phone: '+91 91234 56791',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/61.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-15': 'A',
+                        '2025-09-18': 'P'
+                    }),
+                    weeklyTests: [88, 91, 94, 90, 92],
+                    marks: {
+                        'MATH': {
+                            internal: 47,
+                            external: 85
+                        },
+                        'SCIENCE': {
+                            internal: 45,
+                            external: 80
+                        },
+                        'SST': {
+                            internal: 48,
+                            external: 88
+                        },
+                        'ENGLISH': {
+                            internal: 46,
+                            external: 84
+                        }
+                    },
+                    labs: [{
+                        name: ' Lab',
+                        date: '2025-09-14',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }, {
+                        name: 'Lab',
+                        date: '2025-09-21',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Hackathon Club',
+                        since: '2023'
+                    }, {
+                        title: 'Student Council',
+                        role: 'Treasurer'
+                    }]
+                }
+            },
+            student28: {
+                password: 'pass28',
+                role: 'student',
+                data: {
+                    username: 'student28',
+                    name: 'Nikhil Roy',
+                    id: 'VID2023012372',
+                    email: 'nikhil.roy@vidyaamrit.edu.in',
+                    phone: '+91 91234 56792',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/62.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'A',
+                        '2025-09-04': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-14': 'P'
+                    }),
+                    weeklyTests: [72, 75, 70, 78, 75],
+                    marks: {
+                        'SCIENCE': {
+                            internal: 38,
+                            external: 68
+                        },
+                        'SST': {
+                            internal: 35,
+                            external: 65
+                        },
+                        'MATH': {
+                            internal: 42,
+                            external: 70
+                        },
+                        'ENGLISH': {
+                            internal: 39,
+                            external: 67
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-09',
+                        status: 'Completed',
+                        grade: 'B-'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-09-16',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'Debate Club',
+                        since: '2025'
+                    }]
+                }
+            },
+            student29: {
+                password: 'pass29',
+                role: 'student',
+                data: {
+                    username: 'student29',
+                    name: 'Priyanka Das',
+                    id: 'VID2023012373',
+                    email: 'priyanka.das@vidyaamrit.edu.in',
+                    phone: '+91 91234 56793',
+                    course: '11 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/women/63.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'A',
+                        '2025-09-10': 'P'
+                    }),
+                    weeklyTests: [90, 92, 95, 93, 91],
+                    marks: {
+                        'SST': {
+                            internal: 33,
+                            external: 85
+                        },
+                        'SCIENCE': {
+                            internal: 32,
+                            external: 80
+                        },
+                        'MATH': {
+                            internal: 34,
+                            external: 88
+                        },
+                        'ENGLISH': {
+                            internal: 44,
+                            external: 82
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-14',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-09-21',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Music Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student30: {
+                password: 'pass30',
+                role: 'student',
+                data: {
+                    username: 'student30',
+                    name: 'Tarun Goyal',
+                    id: 'VID2023012374',
+                    email: 'tarun.goyal@vidyaamrit.edu.in',
+                    phone: '+91 91234 56794',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/64.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-08': 'P',
+                        '2025-09-11': 'A',
+                        '2025-09-15': 'P'
+                    }),
+                    weeklyTests: [85, 87, 84, 89, 86],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 44,
+                            external: 79
+                        },
+                        'SST': {
+                            internal: 42,
+                            external: 75
+                        },
+                        'SCIENCE': {
+                            internal: 46,
+                            external: 82
+                        },
+                        'MATH': {
+                            internal: 45,
+                            external: 80
+                        }
+                        
+                    },
+                    labs: [{
+                        name: ' SCIENCE Lab',
+                        date: '2025-09-16',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }, {
+                        name: 'MATH Lab',
+                        date: '2025-09-23',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'Robotics Club',
+                        since: '2023'
+                    }]
+                }
+            },
+            // M.Tech CSE Students (with unique data)
+            student31: {
+                password: 'pass31',
+                role: 'student',
+                data: {
+                    username: 'student31',
+                    name: 'Shlok Patel',
+                    id: 'VID2024021001',
+                    email: 'shlok.p@vidyaamrit.edu.in',
+                    phone: '+91 98765 11223',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/35.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-02': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-06': 'A',
+                        '2025-09-08': 'P',
+                        '2025-09-11': 'P'
+                    }),
+                    weeklyTests: [92, 95, 90, 96, 94, 98],
+                    marks: {
+                        'SST': {
+                            internal: 48,
+                            external: 90
+                        },
+                        'ENGLISH': {
+                            internal: 47,
+                            external: 88
+                        },
+                        'SCIENCE': {
+                            internal: 45,
+                            external: 85
+                        },
+                        'MATH': {
+                            internal: 49,
+                            external: 92
+                        }
+                    },
+                    labs: [{
+                        name: ' MATH Lab',
+                        date: '2025-09-10',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Research Forum',
+                        since: '2024'
+                    }, {
+                        title: 'AI Conference',
+                        role: 'Presenter'
+                    }]
+                }
+            },
+            student32: {
+                password: 'pass32',
+                role: 'student',
+                data: {
+                    username: 'student32',
+                    name: 'Rohit Sharma',
+                    id: 'VID2024021002',
+                    email: 'rohit.s@vidyaamrit.edu.in',
+                    phone: '+91 98765 22334',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/40.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'A',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-13': 'P'
+                    }),
+                    weeklyTests: [85, 88, 87, 91, 89],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 42,
+                            external: 80
+                        },
+                        'SST': {
+                            internal: 40,
+                            external: 78
+                        },
+                        'SCIENCE': {
+                            internal: 45,
+                            external: 85
+                        },
+                        'MATH': {
+                            internal: 43,
+                            external: 81
+                        }
+                    },
+                    labs: [{
+                        name: ' SCIENCE Lab',
+                        date: '2025-09-12',
+                        status: 'Completed',
+                        grade: 'A-'
+                    }],
+                    activities: [{
+                        title: 'Coding Club',
+                        since: '2023'
+                    }, {
+                        title: 'Open Source Contributor',
+                        role: 'Developer'
+                    }]
+                }
+            },
+            student33: {
+                password: 'pass33',
+                role: 'student',
+                data: {
+                    username: 'student33',
+                    name: 'Abhishek Verma',
+                    id: 'VID2024021003',
+                    email: 'abishek.v@vidyaamrit.edu.in',
+                    phone: '+91 98765 33445',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/42.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'P',
+                        '2025-09-06': 'A',
+                        '2025-09-09': 'P',
+                        '2025-09-14': 'P'
+                    }),
+                    weeklyTests: [79, 81, 84, 80, 83],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 38,
+                            external: 75
+                        },
+                        'SST': {
+                            internal: 36,
+                            external: 72
+                        },
+                        'MATH': {
+                            internal: 40,
+                            external: 78
+                        },
+                        'SCIENCE': {
+                            internal: 39,
+                            external: 76
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-15',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'AI/ML Enthusiast Group',
+                        since: '2024'
+                    }]
+                }
+            },
+            student34: {
+                password: 'pass34',
+                role: 'student',
+                data: {
+                    username: 'student34',
+                    name: 'Shailesh Mehta',
+                    id: 'VID2024021004',
+                    email: 'shailesh.m@vidyaamrit.edu.in',
+                    phone: '+91 98765 44556',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/44.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-08': 'P',
+                        '2025-09-11': 'P',
+                        '2025-09-14': 'P'
+                    }),
+                    weeklyTests: [95, 94, 97, 96, 98],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 49,
+                            external: 95
+                        },
+                        'SST': {
+                            internal: 48,
+                            external: 92
+                        },
+                        'SCIENCE': {
+                            internal: 47,
+                            external: 90
+                        },
+                        'MATH': {
+                            internal: 50,
+                            external: 98
+                        }
+                    },
+                    labs: [{
+                        name: 'SCIENCE Lab',
+                        date: '2025-09-18',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Research Forum',
+                        since: '2024'
+                    }, {
+                        title: 'Hackathon',
+                        role: 'Team Leader'
+                    }]
+                }
+            },
+            student35: {
+                password: 'pass35',
+                role: 'student',
+                data: {
+                    username: 'student35',
+                    name: 'Patel Rahul',
+                    id: 'VID2024021005',
+                    email: 'patel.r@vidyaamrit.edu.in',
+                    phone: '+91 98765 55667',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/45.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-03': 'P',
+                        '2025-09-06': 'P',
+                        '2025-09-09': 'A',
+                        '2025-09-12': 'P',
+                        '2025-09-15': 'P'
+                    }),
+                    weeklyTests: [82, 85, 83, 86, 88],
+                    marks: {
+                        'MATH': {
+                            internal: 40,
+                            external: 78
+                        },
+                        'SST': {
+                            internal: 41,
+                            external: 80
+                        },
+                        'SCIENCE': {
+                            internal: 39,
+                            external: 75
+                        },
+                        'ENGLISH': {
+                            internal: 42,
+                            external: 81
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-20',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Tech Startup Initiative',
+                        since: '2024'
+                    }]
+                }
+            },
+            student36: {
+                password: 'pass36',
+                role: 'student',
+                data: {
+                    username: 'student36',
+                    name: 'Ankit Verma',
+                    id: 'VID2024021006',
+                    email: 'ankit.v@vidyaamrit.edu.in',
+                    phone: '+91 98765 66778',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/46.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-04': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-13': 'A',
+                        '2025-09-16': 'P'
+                    }),
+                    weeklyTests: [78, 80, 85, 83, 81],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 37,
+                            external: 74
+                        },
+                        'SST': {
+                            internal: 35,
+                            external: 70
+                        },
+                        'SCIENCE': {
+                            internal: 38,
+                            external: 76
+                        },
+                        'MATH': {
+                            internal: 36,
+                            external: 72
+                        }
+                    },
+                    labs: [{
+                        name: ' MATH Lab',
+                        date: '2025-09-22',
+                        status: 'Completed',
+                        grade: 'B'
+                    }],
+                    activities: [{
+                        title: 'MATH Club',
+                        since: '2024'
+                    }, {
+                        title: 'AI Hackathon',
+                        role: 'Participant'
+                    }]
+                }
+            },
+            student37: {
+                password: 'pass37',
+                role: 'student',
+                data: {
+                    username: 'student37',
+                    name: 'Het Patel',
+                    id: 'VID2024021007',
+                    email: 'het.p@vidyaamrit.edu.in',
+                    phone: '+91 98765 77889',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/47.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-09': 'P',
+                        '2025-09-12': 'P',
+                        '2025-09-15': 'P',
+                        '2025-09-18': 'P'
+                    }),
+                    weeklyTests: [90, 93, 91, 95, 92, 94],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 33,
+                            external: 88
+                        },
+                        'SST': {
+                            internal: 34,
+                            external: 90
+                        },
+                        'SCIENCE': {
+                            internal: 32,
+                            external: 91
+                        },
+                        'MATH': {
+                            internal: 48,
+                            external: 94
+                        }
+                    },
+                    labs: [{
+                        name: ' MATH Lab',
+                        date: '2025-09-25',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Robotics Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student38: {
+                password: 'pass38',
+                role: 'student',
+                data: {
+                    username: 'student38',
+                    name: 'Vivek Patel',
+                    id: 'VID2024021008',
+                    email: 'vivek.p@vidyaamrit.edu.in',
+                    phone: '+91 98765 88990',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/49.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-02': 'P',
+                        '2025-09-04': 'A',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P',
+                        '2025-09-13': 'P'
+                    }),
+                    weeklyTests: [88, 91, 89, 93, 90],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 44,
+                            external: 85
+                        },
+                        'SST': {
+                            internal: 42,
+                            external: 82
+                        },
+                        'SCIENCE': {
+                            internal: 46,
+                            external: 88
+                        },
+                        'MATH': {
+                            internal: 45,
+                            external: 87
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH LAB',
+                        date: '2025-09-27',
+                        status: 'Completed',
+                        grade: 'A'
+                    }],
+                    activities: [{
+                        title: 'BASKETBALL',
+                        since: '2024'
+                    }, {
+                        title: 'DEBATE',
+                        role: 'Organiser'
+                    }]
+                }
+            },
+            student39: {
+                password: 'pass39',
+                role: 'student',
+                data: {
+                    username: 'student39',
+                    name: 'Kevin Mehta',
+                    id: 'VID2024021009',
+                    email: 'kevin.m@vidyaamrit.edu.in',
+                    phone: '+91 98765 99001',
+                    course: '12 GRADE',
+                    
+                    image: 'https://randomuser.me/api/portraits/men/51.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-01': 'P',
+                        '2025-09-03': 'P',
+                        '2025-09-05': 'P',
+                        '2025-09-07': 'P',
+                        '2025-09-10': 'P'
+                    }),
+                    weeklyTests: [81, 84, 82, 86, 85, 89],
+                    marks: {
+                        'MATH': {
+                            internal: 40,
+                            external: 79
+                        },
+                        'ENGLISH': {
+                            internal: 33,
+                            external: 77
+                        },
+                        'SCIENCE': {
+                            internal: 32,
+                            external: 80
+                        },
+                        'SST': {
+                            internal: 33,
+                            external: 78
+                        }
+                    },
+                    labs: [{
+                        name: 'MATH Lab',
+                        date: '2025-09-29',
+                        status: 'Completed',
+                        grade: 'B+'
+                    }],
+                    activities: [{
+                        title: 'Gaming Club',
+                        since: '2024'
+                    }]
+                }
+            },
+            student40: {
+                password: 'pass40',
+                role: 'student',
+                data: {
+                    username: 'student40',
+                    name: 'Sevak Patel',
+                    id: 'VID2024021010',
+                    email: 'sevak.p@vidyaamrit.edu.in',
+                    phone: '+91 98765 00112',
+                    course: '12 GRADE',
+                    
+                    
+                    image: 'https://randomuser.me/api/portraits/men/53.jpg',
+                    attendance: generateAttendance(30, {
+                        '2025-09-05': 'A',
+                        '2025-09-08': 'P',
+                        '2025-09-11': 'P',
+                        '2025-09-14': 'P',
+                        '2025-09-17': 'P'
+                    }),
+                    weeklyTests: [93, 96, 94, 97, 95],
+                    marks: {
+                        'ENGLISH': {
+                            internal: 47,
+                            external: 92
+                        },
+                        'SCIENCE': {
+                            internal: 48,
+                            external: 94
+                        },
+                        'MATH': {
+                            internal: 49,
+                            external: 95
+                        },
+                        'SST': {
+                            internal: 50,
+                            external: 96
+                        }
+                
+                        
+                    },
+                    labs: [{
+                        name: 'ML Lab',
+                        date: '2025-09-30',
+                        status: 'Completed',
+                        grade: 'A+'
+                    }],
+                    activities: [{
+                        title: 'Cloud Club',
+                        since: '2023'
+                    }, {
+                        title: 'Startup Pitch Competition',
+                        role: 'Finalist'
+                    }]
+                }
+            },
+
+            // teacher and parent
+            teacher1: {
+                password: 'teach123',
+                role: 'teacher'
+            },
+            parent1: {
+                password: 'parent123',
+                role: 'parent',
+                child: 'student1'
+            }
+        };
+
+        function generateAttendance(totalDays, presentMap) {
+            const att = {};
+            const year = 2025;
+            const month = 9;
+            for (let d = 1; d <= totalDays; d++) {
+                const dd = d.toString().padStart(2, '0');
+                const dateStr = `${year}-${month.toString().padStart(2, '0')}-${dd}`;
+                if (presentMap && presentMap[dateStr] === 'P') {
+                    att[dateStr] = 'P';
+                } else {
+                    att[dateStr] = 'A';
+                }
+            }
+            return att;
+        }
+
+        let weeklyTestsChart;
+        let attendanceChart;
+        let selectedRole = '';
+
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const messageEl = document.getElementById('message');
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const selectorContainer = document.getElementById('selectorContainer');
+        const studentSelector = document.getElementById('studentSelector');
+        const tabs = document.querySelectorAll('.tab-button');
+
+        document.querySelectorAll('.portal-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedRole = btn.dataset.role;
+                document.getElementById('portalTitle').textContent = `Login as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`;
+                document.getElementById('loginInputs').style.display = 'block';
+            });
+        });
+
+        function populateSelector() {
+            studentSelector.innerHTML = '';
+            Object.values(users).forEach(u => {
+                if (u.role === 'student') {
+                    const opt = document.createElement('option');
+                    opt.value = u.data.username;
+                    opt.textContent = u.data.name + ' (' + u.data.username + ')';
+                    studentSelector.appendChild(opt);
+                }
+            });
+        }
+
+        function animateNumber(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function renderOverview(data) {
+            let presentCount = Object.values(data.attendance).filter(status => status === 'P').length;
+            let absentCount = Object.values(data.attendance).filter(status => status === 'A').length;
+            let totalScores = data.weeklyTests.reduce((sum, score) => sum + score, 0);
+            let average = data.weeklyTests.length > 0 ? totalScores / data.weeklyTests.length : 0;
+
+            const presentDaysEl = document.getElementById('presentDays');
+            const absentDaysEl = document.getElementById('absentDays');
+            const averageScoreEl = document.getElementById('averageScore');
+
+            presentDaysEl.textContent = '0';
+            absentDaysEl.textContent = '0';
+            averageScoreEl.textContent = '0%';
+
+            animateNumber(presentDaysEl, 0, presentCount, 1000);
+            animateNumber(absentDaysEl, 0, absentCount, 1000);
+            animateNumber(averageScoreEl, 0, average, 1000);
+
+            averageScoreEl.textContent = average.toFixed(2) + '%';
+
+
+            // Render Attendance Chart
+            if (attendanceChart) {
+                attendanceChart.destroy();
+            }
+            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+            attendanceChart = new Chart(attendanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Present', 'Absent'],
+                    datasets: [{
+                        label: 'Attendance',
+                        data: [presentCount, absentCount],
+                        backgroundColor: [
+                            'var(--present-color)',
+                            'var(--absent-color)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Days'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function renderProfile(data) {
+            document.getElementById('studentPhoto').style.display = 'block';
+            document.getElementById('studentPhoto').src = data.image;
+            const pd = document.getElementById('profileDetails');
+            pd.innerHTML = `
+                <p><b>Name:</b> ${data.name}</p>
+                <p><b>Student ID:</b> ${data.id}</p>
+                <p><b>Email:</b> ${data.email}</p>
+                <p><b>Phone:</b> ${data.phone}</p>
+                <p><b>Course:</b> ${data.course}</p>
+                <p><b>Year:</b> ${data.year}</p>
+            `;
+        }
+
+        function renderAttendance(data) {
+            const ac = document.getElementById('attendanceCalendar');
+            ac.innerHTML = `<h3 style="grid-column: 1 / -1;">Attendance for September 2025</h3>`;
+            const headers = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            headers.forEach(h => {
+                const hd = document.createElement('div');
+                hd.className = 'attendance-header';
+                hd.textContent = h;
+                ac.appendChild(hd);
+            });
+            const firstDay = new Date('2025-09-01').getDay();
+            for (let i = 0; i < firstDay; i++) {
+                ac.appendChild(document.createElement('div'));
+            }
+            for (let day = 1; day <= 30; day++) {
+                const dd = day.toString().padStart(2, '0');
+                const dateStr = `2025-09-${dd}`;
+                const status = data.attendance[dateStr] || 'A';
+                const ddiv = document.createElement('div');
+                ddiv.className = 'attendance-day ' + (status === 'P' ? 'present' : 'absent');
+                ddiv.textContent = day;
+                ac.appendChild(ddiv);
+            }
+        }
+
+        function renderWeeklyTests(data) {
+            if (weeklyTestsChart) {
+                weeklyTestsChart.destroy();
+            }
+            const ctx = document.getElementById('weeklyTestsChart').getContext('2d');
+            const labels = data.weeklyTests.map((_, i) => `Week ${i + 1}`);
+            weeklyTestsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Weekly Test Score (%)',
+                        data: data.weeklyTests,
+                        borderColor: '#004080',
+                        backgroundColor: 'rgba(0, 64, 128, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointBackgroundColor: '#002855',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#ffd633',
+                        pointHoverBorderColor: '#002855'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Score (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMarksheet(data) {
+            const mc = document.getElementById('marksheetContainer');
+            let html = '<table><thead><tr><th>Subject</th><th>Internal (Max 50)</th><th>External (Max 100)</th><th>Total (Max 150)</th><th>Status</th></tr></thead><tbody>';
+            const passingScore = 90; // 60% of 150
+
+            for (const subj in data.marks) {
+                const mi = data.marks[subj].internal;
+                const me = data.marks[subj].external;
+                const total = mi + me;
+                const status = total >= passingScore ? 'Pass' : 'Fail';
+                const statusClass = total >= passingScore ? 'status-pass' : 'status-fail';
+                
+                html += `<tr><td>${subj}</td><td>${mi}</td><td>${me}</td><td>${total}</td><td class="${statusClass}">${status}</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            mc.innerHTML = html;
+        }
+
+        function renderLabs(data) {
+            const labc = document.getElementById('labsContainer');
+            if (!data.labs || data.labs.length === 0) {
+                labc.innerHTML = '<p>No lab records found.</p>';
+                return;
+            }
+            labc.innerHTML = data.labs.map(l => `
+                <div class="lab-card">
+                    <h4>🧪 ${l.name}</h4>
+                    <div><strong>Date:</strong> ${l.date}</div>
+                    <div><strong>Status:</strong> ${l.status === 'Completed' ? '✅ Completed' : '⏳ ' + l.status}</div>
+                    <div><strong>Grade:</strong> ${l.grade}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderActivities(data) {
+            const actc = document.getElementById('activitiesContainer');
+            if (!data.activities || data.activities.length === 0) {
+                actc.innerHTML = '<p>No activities recorded.</p>';
+                return;
+            }
+            actc.innerHTML = data.activities.map(a => {
+                let subt = '';
+                if (a.since) subt += `Since ${a.since}`;
+                if (a.role) subt += (subt ? ' | ' : '') + `Role: ${a.role}`;
+                return `
+                    <div class="activity-card">
+                        <h4>🎯 ${a.title}</h4>
+                        <small>${subt}</small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderUserDashboard(user) {
+            renderOverview(user.data);
+            renderProfile(user.data);
+            renderAttendance(user.data);
+            renderWeeklyTests(user.data);
+            renderMarksheet(user.data);
+            renderLabs(user.data);
+            renderActivities(user.data);
+        }
+
+        tabs.forEach(b => {
+            b.addEventListener('click', () => {
+                tabs.forEach(bb => {
+                    bb.classList.remove('active');
+                    bb.setAttribute('aria-selected', 'false');
+                });
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+                b.classList.add('active');
+                b.setAttribute('aria-selected', 'true');
+                const target = b.getAttribute('aria-controls');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        studentSelector.addEventListener('change', () => {
+            const uname = studentSelector.value;
+            const u = users[uname];
+            if (u && u.role === 'student') {
+                renderUserDashboard(u);
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            const uname = usernameInput.value.trim();
+            const pw = passwordInput.value.trim();
+            const role = selectedRole;
+
+            if (!uname || !pw) {
+                messageEl.textContent = 'Please enter both username and password.';
+                messageEl.style.color = '#c0392b';
+                return;
+            }
+            const u = users[uname];
+            if (!u || u.password !== pw || u.role !== role) {
+                messageEl.textContent = 'Invalid username/password/role.';
+                messageEl.style.color = '#c0392b';
+                return;
+            }
+
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'flex';
+            messageEl.textContent = '';
+
+            if (role === 'student') {
+                selectorContainer.style.display = 'none';
+                renderUserDashboard(u);
+                document.getElementById('tab-profile').click();
+            } else if (role === 'parent') {
+                selectorContainer.style.display = 'none';
+                const childUser = users[u.child];
+                renderUserDashboard(childUser);
+                document.getElementById('tab-profile').click();
+            } else if (role === 'teacher') {
+                selectorContainer.style.display = 'block';
+                populateSelector();
+                const firstStu = Object.values(users).find(x => x.role === 'student');
+                studentSelector.value = firstStu.data.username;
+                renderUserDashboard(firstStu);
+                document.getElementById('tab-profile').click();
+            }
+        });
+    </script>
+</body>
+</html>
